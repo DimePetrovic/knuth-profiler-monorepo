@@ -39,12 +39,16 @@ export function mapCfgJsonToGraphData(payload: CfgResultJson): GraphData {
   ensureEndpointNodes(nodes);
   ensureSentinelNodes(nodes);
   ensureSentinelEdges(edges);
-  assignBallLarusWeights(nodes, edges);
+  assignKnuthWeights(nodes, edges);
 
   return { nodes: dedupeNodes(nodes), edges };
 }
 
-function assignBallLarusWeights(nodes: GraphNode[], edges: GraphEdge[]): void {
+/**
+ * Dodeljuje svakoj grani e=(u,v) tezinu w(e) = broj putanja od v do EXIT-a
+ * u DAG pogledu grafa (Knutov algoritam, videti master rad, odeljak 2.3.1).
+ */
+function assignKnuthWeights(nodes: GraphNode[], edges: GraphEdge[]): void {
   const normalEdges = edges.filter(edge => edge.kind === 'normal');
   if (normalEdges.length === 0) {
     return;
@@ -63,10 +67,6 @@ function assignBallLarusWeights(nodes: GraphNode[], edges: GraphEdge[]): void {
     outgoing.get(edge.source)?.push(edge);
   }
 
-  for (const group of outgoing.values()) {
-    group.sort((left, right) => left.id.localeCompare(right.id));
-  }
-
   const backEdgeIds = detectBackEdgeIds(nodeIds, outgoing);
   const acyclicOutgoing = new Map<string, GraphEdge[]>();
   for (const [nodeId, group] of outgoing.entries()) {
@@ -78,26 +78,7 @@ function assignBallLarusWeights(nodes: GraphNode[], edges: GraphEdge[]): void {
   const pathCountByNode = computePathCounts(topoOrder, acyclicOutgoing, reachableToExit);
 
   for (const edge of normalEdges) {
-    edge.weight = 1;
-  }
-
-  for (const nodeId of topoOrder) {
-    const outgoingEdges = outgoing.get(nodeId) ?? [];
-    if (outgoingEdges.length === 0) {
-      continue;
-    }
-
-    let offset = 1;
-    for (const edge of outgoingEdges) {
-      if (backEdgeIds.has(edge.id)) {
-        edge.weight = 1;
-        continue;
-      }
-
-      edge.weight = offset;
-      const targetPathCount = pathCountByNode.get(edge.target) ?? 1;
-      offset += Math.max(1, targetPathCount);
-    }
+    edge.weight = pathCountByNode.get(edge.target) ?? 1;
   }
 }
 

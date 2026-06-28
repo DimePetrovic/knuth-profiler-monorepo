@@ -119,7 +119,7 @@ describe('cfg-import.adapter', () => {
 });
 
 describe('cfg-import.adapter – extra coverage', () => {
-  it('assigns deterministic Ball-Larus style weights to imported normal edges', () => {
+  it('assigns Knuth weights (path count to EXIT) to imported normal edges', () => {
     const result = mapCfgJsonToGraphData({
       version: 'cfg-json-1',
       language: 'c',
@@ -149,7 +149,7 @@ describe('cfg-import.adapter – extra coverage', () => {
 
     expect(normalEdges).toEqual([
       { id: 'e0', weight: 1 },
-      { id: 'e1', weight: 2 },
+      { id: 'e1', weight: 1 },
       { id: 'e2', weight: 1 },
       { id: 'e3', weight: 1 },
     ]);
