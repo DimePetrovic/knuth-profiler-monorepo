@@ -21,6 +21,9 @@ libpeerconnection.log
 testem.log
 typings/
 
+# Master rad (LaTeX), zivi odvojeno od koda
+/teza/
+
 # IDEs and editors
 .idea/
 .project
