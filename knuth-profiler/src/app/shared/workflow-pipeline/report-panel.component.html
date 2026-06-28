@@ -1,0 +1,120 @@
+<ng-container *ngIf="facade.reportMetrics() as report">
+  <div class="space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div class="border rounded-lg p-3 bg-gray-50">
+        <div class="text-xs text-gray-600">Број чворова</div>
+        <div class="text-xl font-semibold text-gray-900">{{ report.nodeCount }}</div>
+      </div>
+      <div class="border rounded-lg p-3 bg-gray-50">
+        <div class="text-xs text-gray-600">Број грана</div>
+        <div class="text-xl font-semibold text-gray-900">{{ report.edgeCount }}</div>
+      </div>
+      <div class="border rounded-lg p-3 bg-gray-50">
+        <div class="text-xs text-gray-600">Инструментизоване гране</div>
+        <div class="text-xl font-semibold text-gray-900">{{ report.instrumentedEdgeCount }}</div>
+        <div class="text-xs text-gray-600">{{ report.instrumentedEdgePercent | number:'1.1-2' }}%</div>
+      </div>
+      <div class="border rounded-lg p-3 bg-gray-50">
+        <div class="text-xs text-gray-600">Уштеђене операције над бројачима</div>
+        <div class="text-xl font-semibold text-emerald-700">{{ report.savedOps }}</div>
+        <div class="text-xs text-gray-600">{{ report.savedOpsPercent | number:'1.1-2' }}%</div>
+      </div>
+    </div>
+
+    <div *ngIf="facade.reportCodeArtifact() as artifact" class="border rounded-xl p-4 bg-white text-sm text-gray-800 space-y-3">
+      <div class="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+        <span class="px-2 py-1 rounded bg-gray-100 border border-gray-200">Фајл: {{ artifact.filename }}</span>
+        <span class="px-2 py-1 rounded bg-gray-100 border border-gray-200">Језик: {{ artifact.language }}</span>
+      </div>
+      <div class="border rounded-lg bg-gray-950 text-gray-100 overflow-auto">
+        <div class="p-2 text-xs leading-5 font-mono min-w-[560px]">
+          <div *ngFor="let line of facade.reportSourceLines()"
+               class="flex"
+               [class.bg-amber-200]="line.highlighted">
+            <div class="w-10 pr-2 text-right text-gray-400 select-none border-r border-gray-700">{{ line.lineNumber }}</div>
+            <div class="pl-3 whitespace-pre flex-1 text-gray-100">{{ line.text || ' ' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border rounded-xl p-4 bg-white text-sm text-gray-800 space-y-2">
+      <div class="font-medium text-gray-900">Техничка корелација инструментације</div>
+      <div class="text-xs text-gray-600">
+        Симулирано пролазака кроз граф (извршено / подешено): {{ facade.reportRunProgressText() }}
+      </div>
+      <div *ngIf="facade.reportInstrumentedEdges().length > 0; else noInstrumentedRows" class="overflow-x-auto overflow-y-auto max-h-[320px] border border-gray-200 rounded-lg">
+        <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+          <thead class="bg-gray-50 text-gray-700">
+            <tr>
+              <th class="text-left px-3 py-2 border-b border-gray-200">Грана</th>
+              <th class="text-left px-3 py-2 border-b border-gray-200">Ток</th>
+              <th class="text-right px-3 py-2 border-b border-gray-200">Бројач</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of facade.reportInstrumentedEdges()" class="odd:bg-white even:bg-gray-50">
+              <td class="px-3 py-2 border-b border-gray-100 font-mono">{{ row.edgeId }}</td>
+              <td class="px-3 py-2 border-b border-gray-100">{{ row.sourceLabel }} → {{ row.targetLabel }}</td>
+              <td class="px-3 py-2 border-b border-gray-100 text-right font-semibold">{{ row.count }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #noInstrumentedRows>
+        <div class="text-gray-600">Нема инструментизованих грана за приказ.</div>
+      </ng-template>
+    </div>
+
+    <div class="border rounded-xl p-4 bg-white text-sm text-gray-800 space-y-2">
+      <p>
+        Укупан број операција увећавања бројача над инструментизованим гранама износи
+        <span class="font-semibold">{{ report.instrumentedOps }}</span>,
+        док би у сценарију пуне инструментације свих грана исти број био
+        <span class="font-semibold">{{ report.fullInstrumentationOps }}</span>.
+      </p>
+      <p>
+        Применом Кнутовог приступа постигнуто је смањење за
+        <span class="font-semibold">{{ report.savedOps }}</span>
+        операција, односно
+        <span class="font-semibold">{{ report.savedOpsPercent | number:'1.1-2' }}%</span>
+        у односу на пуни инструментациони модел.
+      </p>
+      <p class="text-gray-700">
+        На реалним софтверским системима, који обухватају вишеструко већи број датотека, контролних токова и извршних путања,
+        очекује се да ефекат селективне инструментације буде значајно израженији, како у погледу извршног трошка,
+        тако и у погледу скалабилности целокупног процеса профилисања.
+      </p>
+    </div>
+
+    <div class="border rounded-xl p-4 bg-white text-sm text-gray-800 space-y-2">
+      <div class="font-medium text-gray-900">Извршавање наредби (чворова), опадајуће по броју пролазака</div>
+      <div class="text-xs text-gray-600">
+        Анимација (извршено / подешено): {{ facade.reportRunProgressText() }} пролазака кроз граф.
+      </div>
+      <div *ngIf="facade.reportNodeExecutions().length > 0; else noNodeExecutions" class="overflow-x-auto overflow-y-auto max-h-[320px] border border-gray-200 rounded-lg">
+        <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+          <thead class="bg-gray-50 text-gray-700">
+            <tr>
+              <th class="text-left px-3 py-2 border-b border-gray-200">Чвор</th>
+              <th class="text-left px-3 py-2 border-b border-gray-200">Ознака</th>
+              <th class="text-right px-3 py-2 border-b border-gray-200">Број извршавања</th>
+              <th class="text-right px-3 py-2 border-b border-gray-200">% по проласку</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of facade.reportNodeExecutions()" class="odd:bg-white even:bg-gray-50">
+              <td class="px-3 py-2 border-b border-gray-100 font-mono">{{ row.nodeId }}</td>
+              <td class="px-3 py-2 border-b border-gray-100">{{ row.nodeLabel }}</td>
+              <td class="px-3 py-2 border-b border-gray-100 text-right font-semibold">{{ row.executionCount }}</td>
+              <td class="px-3 py-2 border-b border-gray-100 text-right font-semibold">{{ row.executionPercent | number:'1.1-2' }}%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #noNodeExecutions>
+        <div class="text-gray-600">Подаци о извршавању чворова нису доступни.</div>
+      </ng-template>
+    </div>
+  </div>
+</ng-container>

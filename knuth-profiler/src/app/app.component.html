@@ -1,0 +1,22 @@
+<header class="border-b bg-white">
+    <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+    <nav class="flex items-center gap-4 text-sm">
+        <a routerLink="/" routerLinkActive="text-gray-900" class="text-gray-600 hover:text-gray-900">
+            Почетна
+        </a>
+        <a routerLink="/teorija" routerLinkActive="text-gray-900" class="text-gray-600 hover:text-gray-900">
+            Теорија
+        </a>
+        <a routerLink="/primeri" routerLinkActive="text-gray-900" class="text-gray-600 hover:text-gray-900">
+            Примери
+        </a>
+        <a routerLink="/cfg-import" routerLinkActive="text-gray-900" class="text-gray-600 hover:text-gray-900">
+            Увоз CFG
+        </a>
+    </nav>
+    </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4">
+    <router-outlet />
+</main>

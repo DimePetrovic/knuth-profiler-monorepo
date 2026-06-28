@@ -1,0 +1,41 @@
+# Python (knuth-backend)
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+
+# Node / Angular (knuth-profiler)
+node_modules/
+dist/
+tmp/
+out-tsc/
+bazel-out/
+npm-debug.log
+yarn-error.log
+.angular/cache/
+.sass-cache/
+connect.lock
+coverage/
+libpeerconnection.log
+testem.log
+typings/
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# System files
+.DS_Store
+Thumbs.db

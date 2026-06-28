@@ -1,0 +1,58 @@
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-4 items-stretch">
+  <div class="border rounded-xl p-4 bg-white h-full flex flex-col gap-4">
+    <div class="space-y-3">
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">Језик</label>
+        <select class="w-full border rounded-lg px-3 py-2" [ngModel]="language" (ngModelChange)="languageChange.emit($event)">
+          <option value="c">C</option>
+          <option value="cpp">C++</option>
+          <option value="java">Java</option>
+          <option value="python">Python</option>
+          <option value="javascript">JavaScript</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm text-gray-600 mb-1">Име фајла</label>
+        <input class="w-full border rounded-lg px-3 py-2" [ngModel]="filename" (ngModelChange)="filenameChange.emit($event)" />
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <button class="hidden xl:inline-flex px-3 py-2 rounded-lg bg-gray-900 text-white hover:opacity-90 disabled:opacity-40" [disabled]="isSubmitting" (click)="submitSource.emit()">
+          Пошаљи код
+        </button>
+
+        <label class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 cursor-pointer">
+          Отпремање фајла
+          <input type="file" class="hidden" (change)="uploadFile.emit($event)" [disabled]="isSubmitting" />
+        </label>
+      </div>
+    </div>
+
+    <div class="border rounded-xl p-3 bg-gray-50 text-sm space-y-1">
+      <div><span class="text-gray-600">ИД посла:</span> {{ state.jobId || '—' }}</div>
+      <div><span class="text-gray-600">Статус:</span> {{ state.status?.status || '—' }}</div>
+      <div><span class="text-gray-600">Фаза:</span> {{ state.status?.stage || '—' }}</div>
+      <div><span class="text-gray-600">Порука:</span> {{ message || '—' }}</div>
+    </div>
+
+    <p class="xl:hidden text-sm text-gray-600">
+      На мањим екранима уређивач изворног кода је сакривен ради прегледности. За мобилни ток користи отпремање фајла.
+    </p>
+  </div>
+
+  <div class="hidden xl:block border rounded-xl p-4 bg-white h-full">
+    <div class="h-full flex flex-col">
+      <label class="block text-sm text-gray-600 mb-1">Изворни код (UTF-8)</label>
+      <textarea
+        class="w-full flex-1 min-h-[320px] border rounded-lg px-3 py-2 font-mono text-sm resize-none"
+        [class.bg-gray-100]="isSourceLocked"
+        [readonly]="isSourceLocked"
+        [ngModel]="source"
+        (ngModelChange)="sourceChange.emit($event)"></textarea>
+      <p *ngIf="isSourceLocked" class="mt-2 text-xs text-gray-600">
+        Уређивач је закључан након отпремања фајла. Промени језик да се учита пример кода и омогући уређивање.
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,102 @@
+<section class="border rounded-xl p-4 md:p-5 lg:p-6 bg-white space-y-5 md:space-y-6">
+  <header>
+    <h2 class="text-xl font-semibold">{{ title }}</h2>
+    <p *ngIf="subtitle" class="text-sm text-gray-600">{{ subtitle }}</p>
+  </header>
+
+  <div class="flex flex-wrap items-center gap-2.5 text-sm">
+    <ng-container *ngFor="let label of stepTitles; let idx = index">
+      <span
+        class="inline-flex items-center rounded-md px-2 py-1 border"
+        [class.border-emerald-300]="stepState(idx) === 'completed'"
+        [class.bg-emerald-50]="stepState(idx) === 'completed'"
+        [class.text-emerald-700]="stepState(idx) === 'completed'"
+        [class.border-gray-900]="stepState(idx) === 'current'"
+        [class.bg-gray-900]="stepState(idx) === 'current'"
+        [class.text-white]="stepState(idx) === 'current'"
+        [class.border-gray-200]="stepState(idx) === 'locked'"
+        [class.bg-gray-50]="stepState(idx) === 'locked'"
+        [class.text-gray-500]="stepState(idx) === 'locked'">
+        {{ idx + 1 }}. корак
+      </span>
+
+      <span *ngIf="idx + 1 < stepTitles.length" class="text-gray-400">&gt;</span>
+    </ng-container>
+  </div>
+
+  <div *ngIf="facade.step() === 0" class="space-y-3">
+    <div class="text-sm text-gray-700">{{ firstStepTitle }}</div>
+    <ng-content select="[pipeline-step-0]"></ng-content>
+  </div>
+
+  <div *ngIf="facade.step() > 0" class="text-sm text-gray-700">
+    {{ facade.stepDescription() }}
+  </div>
+
+  <div *ngIf="facade.step() > 0 && facade.reportCodeArtifact() as artifact" class="space-y-3">
+    <button
+      type="button"
+      class="px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100 text-sm"
+      (click)="toggleCodePreview()">
+      {{ showCodePreview ? 'Сакриј код' : 'Прикажи код' }}
+    </button>
+
+    <div *ngIf="showCodePreview" class="border rounded-xl p-3 bg-white text-sm text-gray-800 space-y-2">
+      <div class="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+        <span class="px-2 py-1 rounded bg-gray-100 border border-gray-200">Фајл: {{ artifact.filename }}</span>
+        <span class="px-2 py-1 rounded bg-gray-100 border border-gray-200">Језик: {{ artifact.language }}</span>
+      </div>
+      <div class="border rounded-lg bg-gray-950 text-gray-100 overflow-auto max-h-[320px]">
+        <pre class="p-3 text-xs leading-5 font-mono whitespace-pre">{{ artifact.source }}</pre>
+      </div>
+    </div>
+  </div>
+
+  <app-sim-controls *ngIf="facade.isSimulationStep()" [facade]="facade"></app-sim-controls>
+
+  <app-recon-panel *ngIf="facade.isReconstructionStep()" [facade]="facade"></app-recon-panel>
+
+  <app-report-panel *ngIf="facade.isReportStep()" [facade]="facade"></app-report-panel>
+
+
+  <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-gray-100">
+    <button *ngIf="facade.step() > 0"
+            class="px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100"
+            (click)="onPrev()">Назад</button>
+
+      <button *ngIf="facade.step() > 0 && facade.step() < 6"
+        class="px-3 py-1.5 rounded-lg bg-gray-900 text-white hover:opacity-90 disabled:opacity-40"
+            [disabled]="!canGoNext()"
+            (click)="onNext()">
+      {{ facade.step() === 0 ? 'Даље' : 'Даље' }}
+    </button>
+
+            <button *ngIf="facade.step() === 0 && canGoNext()"
+              class="px-3 py-1.5 rounded-lg bg-gray-900 text-white hover:opacity-90"
+            (click)="onNext()">
+      Даље
+    </button>
+
+            <button *ngIf="facade.step() === 6"
+              class="px-3 py-1.5 rounded-lg bg-emerald-700 text-white hover:opacity-90"
+            (click)="onFinish()">
+      Заврши
+    </button>
+
+            <button *ngIf="facade.step() === 6"
+              class="px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+            [disabled]="isExportingPdf"
+            (click)="onExportReportPdf()">
+      {{ isExportingPdf ? 'Припрема PDF...' : 'Извези у PDF' }}
+    </button>
+
+      <button *ngIf="facade.step() > 0"
+        class="ml-auto px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100"
+            (click)="facade.resetSteps()">Ресетуј ток рада</button>
+
+  </div>
+
+  <div *ngIf="facade.nextBlockedReason()" class="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+    {{ facade.nextBlockedReason() }}
+  </div>
+</section>

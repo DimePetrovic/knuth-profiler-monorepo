@@ -1,0 +1,11 @@
+digraph CFG {
+  "n0" [label="ENTRY", shape="box"]
+  "n1" [label="if (x > 0)"]
+  "n2" [label="return 1"]
+  "n3" [label="EXIT"]
+
+  "n0" -> "n1"
+  "n1" -> "n2" [label="true"]
+  "n1" -> "n3" [label="false"]
+  "n2" -> "n3"
+}

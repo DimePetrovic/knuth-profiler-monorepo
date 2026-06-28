@@ -1,0 +1,37 @@
+<section class="p-4 md:p-8 space-y-6 md:space-y-7 lg:space-y-8">
+  <app-workflow-pipeline
+    class="block"
+    [facade]="workflow"
+    [title]="workflowTitle()"
+    [subtitle]="workflowSubtitle()"
+    [firstStepTitle]="'Корак 1: Учитавање фајла и праћење посла'">
+
+    <div pipeline-step-0 class="space-y-4 md:space-y-5">
+      <app-cfg-import-source-editor
+        [language]="language()"
+        [filename]="filename()"
+        [source]="source()"
+        [isSourceLocked]="isSourceLocked()"
+        [isSubmitting]="isSubmitting()"
+        [state]="state()"
+        [message]="message()"
+        (languageChange)="onLanguageChange($event)"
+        (filenameChange)="filename.set($event)"
+        (sourceChange)="source.set($event)"
+        (submitSource)="submitSource()"
+        (uploadFile)="uploadFile($event)">
+      </app-cfg-import-source-editor>
+
+      <app-cfg-import-status [error]="state().error"></app-cfg-import-status>
+    </div>
+  </app-workflow-pipeline>
+
+  <section *ngIf="workflow.step() > 0" class="border rounded-xl p-4 md:p-5 lg:p-6 bg-white min-h-[440px] md:min-h-[520px]">
+    <app-graph-canvas
+      [data]="workflow.selectedData()"
+      [layoutName]="workflow.layoutName()"
+      (layoutNameChange)="workflow.setLayout($event)"
+      [overlay]="workflow.overlay()">
+    </app-graph-canvas>
+  </section>
+</section>

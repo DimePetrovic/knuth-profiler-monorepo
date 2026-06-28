@@ -1,0 +1,27 @@
+<!-- Toolbar -->
+<div class="flex flex-wrap items-center justify-between gap-3 md:gap-4 mb-4 md:mb-5">
+  <div class="flex items-center gap-2 text-sm text-gray-600">
+    <span>Интеракција: зумирај точкићем, превуци за померање</span>
+  </div>
+  <div class="flex flex-wrap items-center gap-2 md:gap-2.5">
+    <div class="flex items-center gap-2">
+      <label for="layoutSelect" class="text-sm text-gray-600">Распоред:</label>
+      <select
+        id="layoutSelect"
+        #layoutSelect
+        class="px-3 py-1.5 rounded-lg border border-gray-300 bg-white text-sm"
+        [value]="layoutName"
+        (change)="onLayoutChange(layoutSelect.value)">
+        <option value="dagre">Dagre</option>
+        <option value="elk">ELK</option>
+      </select>
+    </div>
+    <button type="button" class="px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100"
+            (click)="relayout()">Поново распореди</button>
+    <button type="button" class="px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100"
+            (click)="fit()">Прилагоди приказ</button>
+  </div>
+</div>
+
+<!-- Canvas host -->
+<div #cyHost class="h-[420px] md:h-[520px] w-full rounded-xl border border-gray-200 bg-white"></div>

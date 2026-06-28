@@ -1,0 +1,45 @@
+<div class="space-y-3">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div class="flex items-center gap-2">
+      <label class="text-sm text-gray-600 w-32">Број покретања</label>
+      <input #runsInput type="number" min="1"
+             class="px-3 py-1.5 rounded-lg border border-gray-300 w-full transition-colors"
+             [class.bg-gray-100]="facade.isSimulationInputLocked()"
+             [class.text-gray-400]="facade.isSimulationInputLocked()"
+             [class.cursor-not-allowed]="facade.isSimulationInputLocked()"
+             [disabled]="facade.isSimulationInputLocked()"
+             [value]="facade.runs()" (input)="facade.setRuns(runsInput.valueAsNumber)">
+    </div>
+
+    <div class="flex items-center gap-2">
+      <label class="text-sm text-gray-600 w-32">Брзина</label>
+      <input #speedInput type="range" min="0.25" max="3" step="0.25"
+             class="w-full transition-opacity"
+             [class.opacity-40]="facade.isRunning() && !facade.isPaused()"
+             [class.cursor-not-allowed]="facade.isRunning() && !facade.isPaused()"
+             [disabled]="facade.isRunning() && !facade.isPaused()"
+             [value]="facade.speed()" (input)="facade.setSpeed(speedInput.valueAsNumber)">
+    </div>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+      <button class="px-3 py-1.5 rounded-lg bg-gray-900 text-white hover:opacity-90"
+            [disabled]="(facade.isRunning() && !facade.isPaused()) || !facade.hasValidSimulationRuns()"
+            (click)="facade.simStart()">Покрени</button>
+    <button class="px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100"
+            [disabled]="!facade.isRunning() || facade.isPaused()"
+            (click)="facade.simPause()">Пауза</button>
+    <button class="px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100"
+            [disabled]="!facade.isRunning() || !facade.isPaused()"
+            (click)="facade.simResume()">Настави</button>
+    <button class="px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100"
+            [disabled]="!facade.isRunning()"
+            (click)="facade.simStop()">Заустави</button>
+    <button class="px-3 py-1.5 rounded-lg border border-gray-300 hover:bg-gray-100"
+            (click)="facade.simReset()">Ресетуј бројач</button>
+
+    <div class="ml-auto text-sm text-gray-600">
+      Статус: {{ facade.simulationStatusLabel() }} - {{ facade.currentRun() }}/{{ facade.runs() }}
+    </div>
+  </div>
+</div>
