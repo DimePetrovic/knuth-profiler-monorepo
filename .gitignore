@@ -13,7 +13,7 @@ out-tsc/
 bazel-out/
 npm-debug.log
 yarn-error.log
-.angular/cache/
+**/.angular/cache/
 .sass-cache/
 connect.lock
 coverage/
