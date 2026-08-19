@@ -66,6 +66,13 @@ export const GRAPH_CANVAS_BASE_OPTIONS = {
   pixelRatio: 1
 } as const;
 
+/**
+ * Graf kontrole toka je uglavnom lanac: mnogo nivoa jedan ispod drugog, a po
+ * dva cvora jedan pored drugog. Zato se razmak MEDJU NIVOIMA drzi malim, a
+ * razmak unutar nivoa velikim. Sa ranijim vrednostima (rankSep 60, nodeSep 30)
+ * primer sa granjem imao je odnos strana 0,15 — sirina prema visini — pa je
+ * graf bio razvucen u tanku traku i tekst na cvorovima sitan.
+ */
 export function createGraphLayoutOptions(layoutName: GraphLayoutName): Record<string, unknown> {
   if (layoutName === 'elk') {
     return {
@@ -74,7 +81,8 @@ export function createGraphLayoutOptions(layoutName: GraphLayoutName): Record<st
       elk: {
         algorithm: 'layered',
         'elk.direction': 'DOWN',
-        'elk.layered.spacing.nodeNodeBetweenLayers': 40
+        'elk.layered.spacing.nodeNodeBetweenLayers': 18,
+        'elk.spacing.nodeNode': 55
       }
     };
   }
@@ -82,8 +90,8 @@ export function createGraphLayoutOptions(layoutName: GraphLayoutName): Record<st
   return {
     name: 'dagre',
     fit: true,
-    nodeSep: 30,
-    rankSep: 60,
+    nodeSep: 55,
+    rankSep: 18,
     rankDir: 'TB'
   };
 }
