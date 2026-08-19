@@ -8,6 +8,6 @@ export const routes: Routes = [
     { path: '', title: "Почетна", component: HomePageComponent},
     { path: 'primeri', title: "Примери", component: ExamplesPageComponent },
     { path: 'teorija', title: "Теорија", component: TheoryWizardComponent },
-    { path: 'cfg-import', title: 'CFG Import', component: CfgImportPageComponent },
+    { path: 'cfg-import', title: 'Увоз графа контроле тока', component: CfgImportPageComponent },
     { path: '**', redirectTo: '' }
 ];
