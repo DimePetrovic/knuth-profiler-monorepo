@@ -23,7 +23,7 @@ export class ReportPdfExportService {
       .replace(/\.[a-z0-9]+$/i, '')
       .replace(/[^a-z0-9]+/g, '_')
       .replace(/^_+|_+$/g, '')) || 'izvestaj';
-    const exportDate = new Intl.DateTimeFormat('sr-RS', {
+    const exportDate = new Intl.DateTimeFormat('sr-Cyrl-RS', {
       dateStyle: 'medium',
       timeStyle: 'short',
     }).format(new Date());
@@ -47,7 +47,8 @@ export class ReportPdfExportService {
   }
 
   private buildDocumentDefinition(payload: ReportPdfExportPayload, exportDate: string): any {
-    const formatPercent = (value: number): string => `${value.toFixed(2)}%`;
+    const formatPercent = (value: number): string =>
+      `${new Intl.NumberFormat('sr-Cyrl-RS', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)}%`;
     const summaryTableBody: any[] = [
       [
         { text: 'Метрика', style: 'tableHeader' },
@@ -55,7 +56,7 @@ export class ReportPdfExportService {
       ],
       ['Број чворова', `${payload.metrics.nodeCount}`],
       ['Број грана', `${payload.metrics.edgeCount}`],
-      ['Инструментисане гране', `${payload.metrics.instrumentedEdgeCount} (${formatPercent(payload.metrics.instrumentedEdgePercent)})`],
+      ['Инструментоване гране', `${payload.metrics.instrumentedEdgeCount} (${formatPercent(payload.metrics.instrumentedEdgePercent)})`],
       ['Увећања бројача над инструментованим гранама', `${payload.metrics.instrumentedOps}`],
       ['Увећања бројача при пуној инструментацији', `${payload.metrics.fullInstrumentationOps}`],
       ['Уштеђене операције над бројачима', `${payload.metrics.savedOps} (${formatPercent(payload.metrics.savedOpsPercent)})`],

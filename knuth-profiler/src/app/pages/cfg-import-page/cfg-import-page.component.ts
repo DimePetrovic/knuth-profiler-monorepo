@@ -5,6 +5,7 @@ import { ExamplesWorkflowFacade } from '../../features/examples/examples-workflo
 import { CfgImportApiService } from '../../features/cfg-import/cfg-import.api.service';
 import { mapCfgJsonToGraphData } from '../../features/cfg-import/cfg-import.adapter';
 import { CfgJobPollingService } from '../../features/cfg-import/cfg-job-polling.service';
+import { cfgLabel } from '../../features/cfg-import/cfg-import.labels';
 import { CfgErrorJson, CfgImportViewState, CfgLanguage, CfgResultJson } from '../../features/cfg-import/cfg-import.types';
 import { getWorkflowStepMetadata } from '../../features/examples/workflow-step-metadata';
 import { GraphCanvasComponent } from '../../shared/graph-canvas/graph-canvas.component';
@@ -182,7 +183,7 @@ export class CfgImportPageComponent implements OnDestroy {
       const payload = resultState.result;
       if (payload.version === 'cfg-error-1') {
         this.state.update(s => ({ ...s, error: payload as CfgErrorJson }));
-        this.message.set(`${payload.code}: ${payload.message}`);
+        this.message.set(`${cfgLabel(payload.code, 'code')}: ${payload.message}`);
         return false;
       }
 
@@ -195,7 +196,7 @@ export class CfgImportPageComponent implements OnDestroy {
         graphData,
       }));
       this.workflow.loadImportedGraph(graphData);
-      this.message.set('CFG је спреман. Покрени визуализацију кроз кораке као на примерима.');
+      this.message.set('CFG је спреман. Покрени визуелизацију кроз кораке као на примерима.');
       return false;
     } catch (error) {
       this.polling.stop();

@@ -47,7 +47,7 @@ export function findSolvableNodeAndEdge(
     const incidentEdges = data.edges.filter(edge => edge.source === node.id || edge.target === node.id);
     const unknownTreeEdges = incidentEdges.filter(edge => unknownTreeEdgeIds.has(edge.id));
 
-    if (unknownTreeEdges.length < 1) {
+    if (unknownTreeEdges.length !== 1) {
       continue;
     }
 
