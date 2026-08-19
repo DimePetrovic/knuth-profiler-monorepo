@@ -53,4 +53,23 @@ describe('graph-analysis helpers', () => {
 
     expect(computeInstrumentedEdgeIds(graph, ['e0', 'e1', 'e2'])).toEqual(['e3', ENTRY_SENTINEL_ID]);
   });
+
+  it('still assigns a real zero-weight edge to S, not just sentinels (regression for weight>0 filter bug)', () => {
+    // A-B-C-D path (weight 5 each) plus a redundant A-D edge of weight 0.
+    // The redundant edge must end up in S = E \ T, not be silently dropped
+    // because its weight happens to be 0.
+    const graph: GraphData = {
+      nodes: [{ id: 'A' }, { id: 'B' }, { id: 'C' }, { id: 'D' }],
+      edges: [
+        { id: 'e0', source: 'A', target: 'B', weight: 5 },
+        { id: 'e1', source: 'B', target: 'C', weight: 5 },
+        { id: 'e2', source: 'C', target: 'D', weight: 5 },
+        { id: 'e3', source: 'A', target: 'D', weight: 0 }
+      ]
+    };
+
+    const tree = computeMaxWeightSpanningTree(graph);
+    expect(tree).toEqual(['e0', 'e1', 'e2']);
+    expect(computeInstrumentedEdgeIds(graph, tree)).toEqual(['e3']);
+  });
 });

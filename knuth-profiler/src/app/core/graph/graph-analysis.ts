@@ -1,6 +1,7 @@
 import {
   ENTRY_SENTINEL_ID,
   EXIT_SENTINEL_ID,
+  isSentinelEdge,
   isSentinelEdgeId
 } from './graph.constants';
 import { GraphData } from './graph.types';
@@ -39,8 +40,8 @@ export function computeMaxWeightSpanningTree(data: GraphData): string[] {
   const disjointSet = new DisjointSet();
 
   const weightedEdges = data.edges
+    .filter(edge => !isSentinelEdge(edge))
     .map(edge => ({ edge, weight: typeof edge.weight === 'number' ? edge.weight : 0 }))
-    .filter(({ weight }) => weight > 0)
     .sort((left, right) => {
       const weightDiff = right.weight - left.weight;
       if (weightDiff !== 0) {
@@ -69,7 +70,7 @@ export function computeInstrumentedEdgeIds(data: GraphData, mstEdgeIds: readonly
   const mstEdgeIdSet = new Set(mstEdgeIds);
 
   const instrumented = data.edges
-    .filter(edge => (typeof edge.weight === 'number' ? edge.weight : 0) > 0)
+    .filter(edge => !isSentinelEdge(edge))
     .filter(edge => !mstEdgeIdSet.has(edge.id))
     .map(edge => edge.id);
 
