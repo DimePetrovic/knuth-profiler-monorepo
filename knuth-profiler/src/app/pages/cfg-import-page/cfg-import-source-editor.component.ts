@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CfgImportViewState, CfgLanguage } from '../../features/cfg-import/cfg-import.types';
+import { CfgLabelPipe } from '../../features/cfg-import/cfg-label.pipe';
 
 @Component({
   selector: 'app-cfg-import-source-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CfgLabelPipe],
   templateUrl: './cfg-import-source-editor.component.html',
 })
 export class CfgImportSourceEditorComponent {

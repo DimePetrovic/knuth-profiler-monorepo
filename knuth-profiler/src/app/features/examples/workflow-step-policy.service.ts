@@ -53,7 +53,7 @@ export class WorkflowStepPolicyService {
   nextBlockedReason(snapshot: WorkflowProgressSnapshot): string | null {
     if (snapshot.step === 0 && !snapshot.graphReady) {
       return snapshot.isCfgContext
-        ? 'Учитај CFG граф и сачекај успешну обраду да откључаш следећи корак.'
+        ? 'Учитај граф контроле тока и сачекај успешну обраду да откључаш следећи корак.'
         : 'Изабери пример да откључаш следећи корак.';
     }
 
@@ -74,7 +74,7 @@ export class WorkflowStepPolicyService {
     }
 
     if (snapshot.step === 5 && snapshot.pendingTreeEdges > 0) {
-      return 'Израчунај све преостале MST гране пре преласка на извештај.';
+      return 'Израчунај све преостале гране стабла пре преласка на извештај.';
     }
 
     return null;

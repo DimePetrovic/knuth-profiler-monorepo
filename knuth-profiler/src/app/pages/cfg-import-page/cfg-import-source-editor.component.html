@@ -13,7 +13,7 @@
       </div>
 
       <div>
-        <label class="block text-sm text-gray-600 mb-1">Име фајла</label>
+        <label class="block text-sm text-gray-600 mb-1">Име датотеке</label>
         <input class="w-full border rounded-lg px-3 py-2" [ngModel]="filename" (ngModelChange)="filenameChange.emit($event)" />
       </div>
 
@@ -23,7 +23,7 @@
         </button>
 
         <label class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 cursor-pointer">
-          Отпремање фајла
+          Отпремање датотеке
           <input type="file" class="hidden" (change)="uploadFile.emit($event)" [disabled]="isSubmitting" />
         </label>
       </div>
@@ -31,13 +31,13 @@
 
     <div class="border rounded-xl p-3 bg-gray-50 text-sm space-y-1">
       <div><span class="text-gray-600">ИД посла:</span> {{ state.jobId || '—' }}</div>
-      <div><span class="text-gray-600">Статус:</span> {{ state.status?.status || '—' }}</div>
-      <div><span class="text-gray-600">Фаза:</span> {{ state.status?.stage || '—' }}</div>
+      <div><span class="text-gray-600">Статус:</span> {{ state.status?.status | cfgLabel:'status' }}</div>
+      <div><span class="text-gray-600">Фаза:</span> {{ state.status?.stage | cfgLabel:'stage' }}</div>
       <div><span class="text-gray-600">Порука:</span> {{ message || '—' }}</div>
     </div>
 
     <p class="xl:hidden text-sm text-gray-600">
-      На мањим екранима уређивач изворног кода је сакривен ради прегледности. За мобилни ток користи отпремање фајла.
+      На мањим екранима уређивач изворног кода је сакривен ради прегледности. За мобилни ток користи отпремање датотеке.
     </p>
   </div>
 
@@ -51,7 +51,7 @@
         [ngModel]="source"
         (ngModelChange)="sourceChange.emit($event)"></textarea>
       <p *ngIf="isSourceLocked" class="mt-2 text-xs text-gray-600">
-        Уређивач је закључан након отпремања фајла. Промени језик да се учита пример кода и омогући уређивање.
+        Уређивач је закључан након отпремања датотеке. Промени језик да се учита пример кода и омогући уређивање.
       </p>
     </div>
   </div>

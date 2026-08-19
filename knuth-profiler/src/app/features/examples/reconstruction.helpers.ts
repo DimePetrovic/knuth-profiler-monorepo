@@ -98,6 +98,6 @@ export function renderBalanceText(data: GraphData, nodeId: string, edge: GraphEd
   const value = x >= 0 ? `${x}` : `−${Math.abs(x)}`;
 
   return `Σ(улази) = Σ(излази)
-Рачунамо непознату MST грану ${edge.id} као део ${side}-а:
+Рачунамо непознату грану стабла ${edge.id} као део ${side}-а:
 ⇒ вредност непознате гране је ${value}.`;
 }

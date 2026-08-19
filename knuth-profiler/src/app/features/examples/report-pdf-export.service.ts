@@ -56,7 +56,7 @@ export class ReportPdfExportService {
       ['Број чворова', `${payload.metrics.nodeCount}`],
       ['Број грана', `${payload.metrics.edgeCount}`],
       ['Инструментисане гране', `${payload.metrics.instrumentedEdgeCount} (${formatPercent(payload.metrics.instrumentedEdgePercent)})`],
-      ['Увећања бројача над инструментисаним гранама', `${payload.metrics.instrumentedOps}`],
+      ['Увећања бројача над инструментованим гранама', `${payload.metrics.instrumentedOps}`],
       ['Увећања бројача при пуној инструментацији', `${payload.metrics.fullInstrumentationOps}`],
       ['Уштеђене операције над бројачима', `${payload.metrics.savedOps} (${formatPercent(payload.metrics.savedOpsPercent)})`],
     ];
@@ -135,7 +135,7 @@ export class ReportPdfExportService {
               },
               layout: 'lightHorizontalLines',
             }
-          : { text: 'Нема доступних инструментисаних грана.', style: 'subtle' },
+          : { text: 'Нема доступних инструментованих грана.', style: 'subtle' },
         { text: 'Рангирање чворова по извршавању', style: 'h2' },
         { text: `Напредак покретања (извршено/подешено): ${payload.runProgressText}`, style: 'subtle' },
         payload.nodeRows.length > 0
@@ -161,7 +161,7 @@ export class ReportPdfExportService {
         { text: 'Закључак', style: 'h2' },
         {
           text:
-            'Селективна инструментација заснована на Knuth-овом приступу смањује трошак ажурирања бројача у односу на пуну инструментацију свих грана. Код реалних софтверских система, са већим бројем датотека, гранања и извршних путања, овакав приступ постаје знатно важнији са становишта перформанси и скалабилности процеса профилирања.',
+            'Селективна инструментација заснована на Кнутовом приступу смањује трошак ажурирања бројача у односу на пуну инструментацију свих грана. Код реалних софтверских система, са већим бројем датотека, гранања и извршних путања, овакав приступ постаје знатно важнији са становишта перформанси и скалабилности процеса профајлирања.',
         },
       ],
       styles: {

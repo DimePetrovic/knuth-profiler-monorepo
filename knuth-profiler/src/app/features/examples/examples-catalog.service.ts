@@ -95,8 +95,8 @@ export class ExamplesCatalogService {
       edges: [
         this.e('e0', 'ENTRY', 'S', '', 1, 'entry'),
         this.e('e1', 'S', 'D', '', 1),
-        this.e('e2', 'D', 'T', 'true', 1),
-        this.e('e3', 'D', 'F', 'false', 2),
+        this.e('e2', 'D', 'T', 'да', 1),
+        this.e('e3', 'D', 'F', 'не', 2),
         this.e('e4', 'T', 'M', '', 1),
         this.e('e5', 'F', 'M', '', 1),
         this.e('e6', 'M', 'EXIT', '', 1, 'exit')
@@ -118,12 +118,12 @@ export class ExamplesCatalogService {
       edges: [
         this.e('e0', 'ENTRY', 'I', '', 1, 'entry'),
         this.e('e1', 'I', 'D', '', 1),
-        this.e('e2', 'D', 'B', 'true', 1),
+        this.e('e2', 'D', 'B', 'да', 1),
         this.e('e3', 'B', 'D', '', 1),   // back
-        this.e('e4', 'D', 'EXIT', 'false', 1, 'exit')
+        this.e('e4', 'D', 'EXIT', 'не', 1, 'exit')
       ]
     };
-    return { id: 'while-loop', title: 'Једноставна петља', description: 'While-петља са повратном ивицом.', data };
+    return { id: 'while-loop', title: 'Једноставна петља', description: 'Петља са повратном граном.', data };
   }
 
   // 4) Nested loop
@@ -140,11 +140,11 @@ export class ExamplesCatalogService {
       edges: [
         this.e('e0', 'ENTRY', 'P', '', 1, 'entry'),
         this.e('e1', 'P', 'D1', '', 1),
-        this.e('e2', 'D1', 'D2', 'true', 1),
-        this.e('e3', 'D2', 'B', 'true', 1),
+        this.e('e2', 'D1', 'D2', 'да', 1),
+        this.e('e3', 'D2', 'B', 'да', 1),
         this.e('e4', 'B', 'D2', '', 1),  // inner back
-        this.e('e5', 'D2', 'D1', 'false', 1),
-        this.e('e6', 'D1', 'EXIT', 'false', 1, 'exit')
+        this.e('e5', 'D2', 'D1', 'не', 1),
+        this.e('e6', 'D1', 'EXIT', 'не', 1, 'exit')
       ]
     };
     return { id: 'nested-loop', title: 'Угњеждена петља', description: 'Две петље: унутрашња у спољашњој.', data };
@@ -166,7 +166,7 @@ export class ExamplesCatalogService {
         this.e('e0', 'ENTRY', 'D', '', 1, 'entry'),
         this.e('e1', 'D', 'B0', '=0', 1),
         this.e('e2', 'D', 'B1', '=1', 2),
-        this.e('e3', 'D', 'B2', 'else', 3),
+        this.e('e3', 'D', 'B2', 'иначе', 3),
         this.e('e4', 'B0', 'M', '', 1),
         this.e('e5', 'B1', 'M', '', 1),
         this.e('e6', 'B2', 'M', '', 1),
@@ -190,15 +190,15 @@ export class ExamplesCatalogService {
       ],
       edges: [
         this.e('e0', 'ENTRY', 'Dloop', '', 1, 'entry'),
-        this.e('e1', 'Dloop', 'Body', 'true', 1),
+        this.e('e1', 'Dloop', 'Body', 'да', 1),
         this.e('e2', 'Body', 'Dif', '', 1),
-        this.e('e3', 'Dif', 'T', 'true', 1),
-        this.e('e4', 'Dif', 'F', 'false', 2),
+        this.e('e3', 'Dif', 'T', 'да', 1),
+        this.e('e4', 'Dif', 'F', 'не', 2),
         this.e('e5', 'T', 'Dloop', '', 1),
         this.e('e6', 'F', 'Dloop', '', 1),
-        this.e('e7', 'Dloop', 'EXIT', 'false', 1, 'exit')
+        this.e('e7', 'Dloop', 'EXIT', 'не', 1, 'exit')
       ]
     };
-    return { id: 'loop-if', title: 'Петља + if', description: 'If-else унутар петље.', data };
+    return { id: 'loop-if', title: 'Петља са гранањем', description: 'Гранање унутар петље.', data };
   }
 }

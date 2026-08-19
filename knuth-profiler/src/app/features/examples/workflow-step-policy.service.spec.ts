@@ -19,7 +19,7 @@ describe('WorkflowStepPolicyService', () => {
       currentRun: 0,
       configuredRuns: 20,
       pendingTreeEdges: 0,
-    })).toContain('CFG');
+    })).toContain('граф контроле тока');
   });
 
   it('preserves simulation state from step 5 to 6', () => {

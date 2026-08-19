@@ -72,13 +72,13 @@ export class ReconstructionStateService {
   computeNext(): ReconStep | null {
     const gd = this.gd;
     if (!gd) {
-      this.lastComputeMessage.set('Graf nije učitan.');
+      this.lastComputeMessage.set('Граф није учитан.');
       return null;
     }
 
     const pending = this.pendingTreeEdgeIds();
     if (pending.length === 0) {
-      this.lastComputeMessage.set('Nema preostalih MST grana za rekonstrukciju.');
+      this.lastComputeMessage.set('Нема преосталих грана стабла за реконструкцију.');
       return null;
     }
 
@@ -87,7 +87,7 @@ export class ReconstructionStateService {
     const candidate = findSolvableNodeAndEdge(gd, pending, known);
     if (!candidate) {
       this.lastComputeMessage.set(
-        `Nijedan čvor trenutno nije rešiv. Pending MST grane: ${pending.length}, poznatih brojača: ${known.size}. Pokreni simulaciju ili idi na sledeći korak.`
+        `Ниједан чвор тренутно није решив. Преостало грана стабла: ${pending.length}, познатих бројача: ${known.size}. Покрени симулацију или пређи на следећи корак.`
       );
       return null;
     }
