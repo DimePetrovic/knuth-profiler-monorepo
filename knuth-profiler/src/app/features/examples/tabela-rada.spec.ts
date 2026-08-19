@@ -85,6 +85,56 @@ describe('Табела сажетка у раду', () => {
     expect(r.s).withContext('колона $e - n + 1$').toBe(red.e - red.n + 1);
   });
 
+  /**
+   * Тежине у примерима нису уписане руком него израчунате, па морају да прате
+   * дефиницију $w(e) = \pi(v)$ из рада. Референца овде броји путање
+   * независно: повратне гране открива претрагом у дубину из улазног чвора,
+   * тачно како рад дефинише повратну грану.
+   */
+  it('тежине у свим примерима прате дефиницију $w(e) = \\pi(v)$', () => {
+    for (const primer of katalog.list()) {
+      const grane = primer.data.edges.filter(e => !isSentinelEdgeId(e.id));
+
+      const izlazne = new Map<string, typeof grane>();
+      for (const g of grane) {
+        if (!izlazne.has(g.source)) izlazne.set(g.source, []);
+        izlazne.get(g.source)!.push(g);
+      }
+
+      const stanje = new Map<string, 0 | 1 | 2>();
+      const povratne = new Set<string>();
+      const dfs = (v: string): void => {
+        stanje.set(v, 1);
+        for (const g of izlazne.get(v) ?? []) {
+          const s = stanje.get(g.target) ?? 0;
+          if (s === 0) dfs(g.target);
+          else if (s === 1) povratne.add(g.id);
+        }
+        stanje.set(v, 2);
+      };
+      dfs('ENTRY');
+
+      const memo = new Map<string, number>();
+      const pi = (v: string): number => {
+        if (v === 'EXIT') return 1;
+        const z = memo.get(v);
+        if (z !== undefined) return z;
+        memo.set(v, 0);
+        const zbir = (izlazne.get(v) ?? [])
+          .filter(g => !povratne.has(g.id))
+          .reduce((a, g) => a + pi(g.target), 0);
+        memo.set(v, zbir);
+        return zbir;
+      };
+
+      for (const g of grane) {
+        expect(g.weight)
+          .withContext(`пример ${primer.id}, грана ${g.id} (${g.source}→${g.target})`)
+          .toBe(pi(g.target));
+      }
+    }
+  });
+
   it('уз сваки пример се мери мање грана него што их граф има', () => {
     for (const primer of katalog.list()) {
       const r = izmeri(primer.data);
