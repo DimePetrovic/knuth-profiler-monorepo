@@ -61,7 +61,13 @@ export class WorkflowReportService {
   ): WorkflowReportMetrics {
     const nonSentinelEdges = graph.edges.filter(edge => !isSentinelEdge(edge));
     const edgeCount = nonSentinelEdges.length;
-    const nodeCount = graph.nodes.length;
+    // Pomocni cvorovi uz granicne grane ne ulaze u broj n, isto kao sto ni
+    // granicne grane ne ulaze u e. Bez toga bi prikazano n bilo za dva vece
+    // od onog iz dokaza optimalnosti, pa jednakost |S| = e - n + 1 ne bi
+    // vazila nad prikazanim brojevima.
+    const nodeCount = graph.nodes.filter(
+      node => node.id !== GHOST_IN_NODE_ID && node.id !== GHOST_OUT_NODE_ID,
+    ).length;
     const instrumentedIds = new Set(instrumentedEdgeIds.filter(id => !id.startsWith('__')));
     const instrumentedEdgeCount = nonSentinelEdges.filter(edge => instrumentedIds.has(edge.id)).length;
 
