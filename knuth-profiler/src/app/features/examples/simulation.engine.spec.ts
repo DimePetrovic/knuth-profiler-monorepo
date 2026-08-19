@@ -71,9 +71,22 @@ describe('SimulationEngine', () => {
         { id: 'a', source: 'x', target: 'y', kind: 'normal', weight: 1 },
         { id: 'b', source: 'x', target: 'z', kind: 'normal', weight: 3 }
       ];
-      // Sum = 4, so roulette: [0, 1) -> a, [1, 4) -> b
-      const rng = deterministicRng(0.1); // 0.1 * 4 = 0.4 -> a
+      // Bira se srazmerno w+1, dakle 2 i 4; sum = 6: [0, 2) -> a, [2, 6) -> b
+      const rng = deterministicRng(0.1); // 0.1 * 6 = 0.6 -> a
       expect(pickRandomEdge(edges, rng).id).toBe('a');
+      expect(pickRandomEdge(edges, deterministicRng(0.5)).id).toBe('b'); // 3.0 -> b
+    });
+
+    it('should still reach a zero-weight edge (loop body entry)', () => {
+      // Grana ka telu petlje ima w = 0 po definiciji iz rada. Da se bira
+      // srazmerno samoj tezini, telo petlje se nikada ne bi izvrsilo.
+      const edges: GraphEdge[] = [
+        { id: 'telo', source: 'd', target: 'b', kind: 'normal', weight: 0 },
+        { id: 'izlaz', source: 'd', target: 'exit', kind: 'normal', weight: 1 }
+      ];
+      // w+1 daje 1 i 2, sum = 3: [0, 1) -> telo, [1, 3) -> izlaz
+      expect(pickRandomEdge(edges, deterministicRng(0.1)).id).toBe('telo');
+      expect(pickRandomEdge(edges, deterministicRng(0.9)).id).toBe('izlaz');
     });
   });
 

@@ -60,7 +60,10 @@ class Builder {
   }
 
   node(kind: NodeKind = 'normal'): string {
-    const id = `n${this.nodeSeq++}`;
+    // Prefiks 'b' (blok) sortira se PRE 'ENTRY' po localeCompare. Namerno:
+    // tako korpus izlaze pretragu u dubinu koja ne krece iz ulaznog cvora,
+    // sto je greska koju katalog primera (cvorovi B, D) ume da izazove.
+    const id = `b${this.nodeSeq++}`;
     this.nodes.push({ id, label: id, kind });
     return id;
   }

@@ -25,42 +25,29 @@ const SEME = 20260819;
 const GRAFOVA = 200;
 
 /**
- * Referentno brojanje putanja do izlaza, nezavisno od implementacije u
- * aplikaciji: povratne grane se uzimaju kao istina po konstrukciji (ne
- * detektuju se), obilazak je rekurzivan sa memoizacijom (ne topoloski).
+ * Referentno brojanje putanja do izlaza, po definiciji iz rada:
  *
- * Konvencija je ista kao u aplikaciji i nije proizvoljna. U grafu sa petljom
- * broj putanja je beskonacan, pa se broji nad aciklicnim pogledom. Cvor iz
- * kog se u tom pogledu ne stize do izlaza — telo petlje, iz kog se izlazi
- * jedino povratnom granom — dobija pi = 1, a ne 0. Nula bi tvrdila da iz tela
- * petlje nema puta do izlaza, sto nije tacno u samom programu (uporediti K41).
+ *   pi(v) = 1                             ako je v = EXIT
+ *   pi(v) = suma pi(w) po granama (v,w)   inace, nad DAG pogledom
+ *
+ * Cvor iz kog u DAG pogledu nema putanje do izlaza ima pi = 0, i to nije
+ * izuzetak nego sadrzaj tvrdnje: grana koja ulazi u telo petlje je
+ * strukturno najmanje znacajna i upravo nju treba meriti.
+ *
+ * Nezavisnost od aplikacije: povratne grane su ovde istina po konstrukciji
+ * (generator ih obelezava), a ne rezultat detekcije; obilazak je rekurzivan
+ * sa memoizacijom, a ne topoloski.
  */
 function ocekivaneTezine(data: GraphData): Map<string, number> {
   const grane = realEdges(data);
   const aciklicne = grane.filter(edge => edge.data?.['povratna'] !== true);
 
   const izlazne = new Map<string, string[]>();
-  const ulazne = new Map<string, string[]>();
   for (const node of realNodes(data)) {
     izlazne.set(node.id, []);
-    ulazne.set(node.id, []);
   }
   for (const edge of aciklicne) {
     izlazne.get(edge.source)?.push(edge.target);
-    ulazne.get(edge.target)?.push(edge.source);
-  }
-
-  // Unazad od izlaza: koji cvorovi uopste stizu do njega bez povratnih grana.
-  const stizeDoIzlaza = new Set<string>([EXIT_NODE_ID]);
-  const stek = [EXIT_NODE_ID];
-  while (stek.length > 0) {
-    const cur = stek.pop()!;
-    for (const prethodnik of ulazne.get(cur) ?? []) {
-      if (!stizeDoIzlaza.has(prethodnik)) {
-        stizeDoIzlaza.add(prethodnik);
-        stek.push(prethodnik);
-      }
-    }
   }
 
   const memo = new Map<string, number>();
@@ -73,14 +60,12 @@ function ocekivaneTezine(data: GraphData): Map<string, number> {
       return zapamceno;
     }
 
-    const nastavci = (izlazne.get(cvor) ?? []).filter(next => stizeDoIzlaza.has(next));
-    const vrednost =
-      nastavci.length === 0
-        ? 1
-        : Math.max(1, nastavci.reduce((acc, next) => acc + brojPutanja(next), 0));
-
-    memo.set(cvor, vrednost);
-    return vrednost;
+    // Graf bez povratnih grana je aciklican, pa se ovaj upis nikada ne cita
+    // pre nego sto ga konacna vrednost zameni.
+    memo.set(cvor, 0);
+    const zbir = (izlazne.get(cvor) ?? []).reduce((acc, next) => acc + brojPutanja(next), 0);
+    memo.set(cvor, zbir);
+    return zbir;
   };
 
   const tezine = new Map<string, number>();
@@ -223,6 +208,46 @@ describe('Својства Кнутовог алгоритма над насум
         realEdges(g.data).length - n + 1
       );
     });
+  });
+
+  /**
+   * Primer iz teorijske glave rada (slika sa razapinjucim stablom): petlja
+   * cije telo nema drugog izlaza osim povratne grane. Rad tvrdi pi(telo) = 0,
+   * pa grana KA telu ima tezinu 0 i ona se meri, dok povratna grana ulazi u
+   * stablo. Cvorovi se namerno zovu kao u katalogu primera, jer se 'B' i 'D'
+   * sortiraju pre 'ENTRY' — pretraga u dubinu koja ne krene iz ulaznog cvora
+   * ovde proglasi pogresnu granu povratnom.
+   */
+  it('петља из рада: тело има $\\pi = 0$, повратна грана улази у стабло', () => {
+    const petlja: GraphData = {
+      nodes: [
+        { id: 'ENTRY', label: 'ENTRY', kind: 'entry' },
+        { id: 'I', label: 'I', kind: 'normal' },
+        { id: 'D', label: 'D', kind: 'decision' },
+        { id: 'B', label: 'B', kind: 'normal' },
+        { id: 'EXIT', label: 'EXIT', kind: 'exit' },
+      ],
+      edges: [
+        { id: 'e0', source: 'ENTRY', target: 'I', kind: 'normal', weight: 0 },
+        { id: 'e1', source: 'I', target: 'D', kind: 'normal', weight: 0 },
+        { id: 'e2', source: 'D', target: 'B', kind: 'normal', weight: 0 },
+        { id: 'e3', source: 'B', target: 'D', kind: 'normal', weight: 0 },
+        { id: 'e4', source: 'D', target: 'EXIT', kind: 'normal', weight: 0 },
+      ],
+    };
+
+    assignKnuthWeights(petlja.nodes, petlja.edges);
+    const tezina = (id: string) => petlja.edges.find(e => e.id === id)!.weight;
+
+    expect(tezina('e2')).withContext('грана ка телу петље, $w = \\pi(B) = 0$').toBe(0);
+    expect(tezina('e3')).withContext('повратна грана, $w = \\pi(D) = 1$').toBe(1);
+
+    const T = computeMaxWeightSpanningTree(petlja);
+    expect(T).withContext('повратна грана припада стаблу').toContain('e3');
+    expect(T).withContext('грана ка телу петље не припада стаблу').not.toContain('e2');
+    expect(computeInstrumentedEdgeIds(petlja, T).filter(id => !isSentinelEdgeId(id)))
+      .withContext('мери се тачно грана ка телу петље')
+      .toEqual(['e2']);
   });
 
   it('гранична грана ка излазу се никада не инструментује, а улазна увек', () => {

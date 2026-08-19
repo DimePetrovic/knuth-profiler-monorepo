@@ -185,20 +185,19 @@ export function getOutgoingEdges(gd: GraphData, nodeId: string): GraphEdge[] {
 }
 
 /**
- * Pick a random edge with probability proportional to edge weight.
- * If all weights are 0 or absent, falls back to uniform distribution.
+ * Bira granu nasumicno, sa verovatnocom srazmernom vrednosti w(e) + 1.
+ *
+ * Tezina w(e) = pi(v) je struktura, ne verovatnoca, i sme biti nula: grana
+ * koja ulazi u telo petlje ima w = 0 jer iz tela nema putanje do izlaza bez
+ * povratne grane. Ako bi se biralo srazmerno samoj tezini, ta bi grana bila
+ * nedostizna i telo petlje se nikada ne bi izvrsilo. Uvecanje za jedan cuva
+ * poredak znacajnosti, a nijednoj grani ne oduzima sansu.
  */
 export function pickRandomEdge(edges: GraphEdge[], rng: () => number): GraphEdge {
-  const weights = edges.map(e => (typeof e.weight === 'number' ? e.weight : 0));
+  const weights = edges.map(e => (typeof e.weight === 'number' ? e.weight : 0) + 1);
   const sum = weights.reduce((a, b) => a + b, 0);
 
-  if (sum <= 0) {
-    // No positive weights: uniform random selection
-    const idx = Math.floor(rng() * edges.length);
-    return edges[Math.min(idx, edges.length - 1)];
-  }
-
-  // Weighted selection: roulette wheel
+  // Roulette wheel
   let r = rng() * sum;
   for (let i = 0; i < edges.length; i++) {
     if (r < weights[i]) return edges[i];

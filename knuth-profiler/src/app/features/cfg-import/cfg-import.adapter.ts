@@ -74,11 +74,10 @@ export function assignKnuthWeights(nodes: GraphNode[], edges: GraphEdge[]): void
   }
 
   const topoOrder = buildTopologicalOrder(nodeIds, acyclicOutgoing);
-  const reachableToExit = findNodesThatReachExit(acyclicOutgoing);
-  const pathCountByNode = computePathCounts(topoOrder, acyclicOutgoing, reachableToExit);
+  const pathCountByNode = computePathCounts(topoOrder, acyclicOutgoing);
 
   for (const edge of normalEdges) {
-    edge.weight = pathCountByNode.get(edge.target) ?? 1;
+    edge.weight = pathCountByNode.get(edge.target) ?? 0;
   }
 }
 
@@ -105,7 +104,17 @@ function detectBackEdgeIds(
     visitState.set(nodeId, 2);
   };
 
-  for (const nodeId of sortedNodeIds) {
+  // Pretraga MORA da krene iz ENTRY-ja. Povratna grana je definisana preko
+  // stabla pretrage zapocete iz ulaznog cvora; kad se krene odnekud drugde,
+  // kao povratna se proglasi druga grana istog ciklusa. Kod petlje se tako
+  // umesto grane koja zatvara ciklus obelezi grana koja ulazi u telo petlje.
+  // Preostali cvorovi se obilaze posle, zbog uvezenih grafova koji umeju da
+  // imaju delove nedostizne iz ENTRY-ja.
+  const redosled = nodeIds.has(ENTRY_NODE_ID)
+    ? [ENTRY_NODE_ID, ...sortedNodeIds.filter(id => id !== ENTRY_NODE_ID)]
+    : sortedNodeIds;
+
+  for (const nodeId of redosled) {
     if ((visitState.get(nodeId) ?? 0) === 0) {
       dfs(nodeId);
     }
@@ -141,43 +150,23 @@ function buildTopologicalOrder(
   return order.reverse();
 }
 
-function findNodesThatReachExit(outgoing: Map<string, GraphEdge[]>): Set<string> {
-  const incoming = new Map<string, string[]>();
-
-  for (const [nodeId, edges] of outgoing.entries()) {
-    if (!incoming.has(nodeId)) {
-      incoming.set(nodeId, []);
-    }
-
-    for (const edge of edges) {
-      if (!incoming.has(edge.target)) {
-        incoming.set(edge.target, []);
-      }
-      incoming.get(edge.target)?.push(edge.source);
-    }
-  }
-
-  const reachable = new Set<string>([EXIT_NODE_ID]);
-  const stack = [EXIT_NODE_ID];
-
-  while (stack.length > 0) {
-    const nodeId = stack.pop()!;
-    for (const predecessor of incoming.get(nodeId) ?? []) {
-      if (reachable.has(predecessor)) {
-        continue;
-      }
-      reachable.add(predecessor);
-      stack.push(predecessor);
-    }
-  }
-
-  return reachable;
-}
-
+/**
+ * Broj putanja od svakog cvora do EXIT-a u DAG pogledu grafa:
+ *
+ *   pi(v) = 1                              ako je v = EXIT
+ *   pi(v) = suma pi(w) po granama (v,w)    inace
+ *
+ * Cvor iz kog u DAG pogledu nema nijedne putanje do izlaza — telo petlje,
+ * iz kog se izlazi jedino povratnom granom — ima pi(v) = 0. Nula nije
+ * izuzetak koji treba zaobici: ona govori da je grana koja ulazi u telo
+ * petlje strukturno najmanje znacajna, pa upravo ona treba da se meri.
+ *
+ * Obrnuti topoloski redosled garantuje da su svi naslednici izracunati pre
+ * cvora, pa rekurzija ne treba pomocnu proveru dostiznosti.
+ */
 function computePathCounts(
   topoOrder: string[],
-  outgoing: Map<string, GraphEdge[]>,
-  reachableToExit: Set<string>
+  outgoing: Map<string, GraphEdge[]>
 ): Map<string, number> {
   const pathCountByNode = new Map<string, number>();
 
@@ -189,17 +178,9 @@ function computePathCounts(
       continue;
     }
 
-    const validOutgoing = (outgoing.get(nodeId) ?? [])
-      .filter(edge => reachableToExit.has(edge.target));
-
-    if (validOutgoing.length === 0) {
-      pathCountByNode.set(nodeId, 1);
-      continue;
-    }
-
-    const sum = validOutgoing
-      .reduce((acc, edge) => acc + (pathCountByNode.get(edge.target) ?? 1), 0);
-    pathCountByNode.set(nodeId, Math.max(1, sum));
+    const sum = (outgoing.get(nodeId) ?? [])
+      .reduce((acc, edge) => acc + (pathCountByNode.get(edge.target) ?? 0), 0);
+    pathCountByNode.set(nodeId, sum);
   }
 
   return pathCountByNode;
