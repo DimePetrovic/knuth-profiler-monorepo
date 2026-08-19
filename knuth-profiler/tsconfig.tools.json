@@ -1,0 +1,17 @@
+/* Prevodjenje alatke za evaluaciju u obican Node program.
+   Alatka uvozi samo ciste module aplikacije, bez Angular okruzenja. */
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./.tools-out",
+    "rootDir": ".",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"]
+  },
+  "include": ["tools/**/*.ts"]
+}

@@ -48,7 +48,7 @@ export function mapCfgJsonToGraphData(payload: CfgResultJson): GraphData {
  * Dodeljuje svakoj grani e=(u,v) tezinu w(e) = broj putanja od v do EXIT-a
  * u DAG pogledu grafa (Knutov algoritam, videti master rad, odeljak 2.3.1).
  */
-function assignKnuthWeights(nodes: GraphNode[], edges: GraphEdge[]): void {
+export function assignKnuthWeights(nodes: GraphNode[], edges: GraphEdge[]): void {
   const normalEdges = edges.filter(edge => edge.kind === 'normal');
   if (normalEdges.length === 0) {
     return;

@@ -1,0 +1,131 @@
+{
+  "seme": 20260819,
+  "grafova": 10000,
+  "pokretanjaPoGrafu": 50,
+  "strukturnihPrekrsaja": 0,
+  "prekrsaji": [],
+  "ukupno": {
+    "grafova": 10000,
+    "prosecnoN": 46.5,
+    "prosecnoE": 63.1,
+    "prosecnoMerenih": 17.6,
+    "prosecanUdeoMerenih": 0.2277,
+    "prosecnaUstedaOperacija": 0.8125,
+    "najmanjiUdeo": 0,
+    "najveciUdeo": 0.3578
+  },
+  "poKlasi": {
+    "линеарни ток": {
+      "grafova": 1667,
+      "prosecnoN": 14.4,
+      "prosecnoE": 13.4,
+      "prosecnoMerenih": 0,
+      "prosecanUdeoMerenih": 0,
+      "prosecnaUstedaOperacija": 1,
+      "najmanjiUdeo": 0,
+      "najveciUdeo": 0
+    },
+    "гранање": {
+      "grafova": 1667,
+      "prosecnoN": 46.9,
+      "prosecnoE": 58.7,
+      "prosecnoMerenih": 12.8,
+      "prosecanUdeoMerenih": 0.2157,
+      "prosecnaUstedaOperacija": 0.8268,
+      "najmanjiUdeo": 0.1667,
+      "najveciUdeo": 0.2432
+    },
+    "петља": {
+      "grafova": 1667,
+      "prosecnoN": 39.1,
+      "prosecnoE": 50.5,
+      "prosecnoMerenih": 12.4,
+      "prosecanUdeoMerenih": 0.2407,
+      "prosecnaUstedaOperacija": 0.7601,
+      "najmanjiUdeo": 0.2,
+      "najveciUdeo": 0.2474
+    },
+    "угњеждена петља": {
+      "grafova": 1667,
+      "prosecnoN": 52.2,
+      "prosecnoE": 76.4,
+      "prosecnoMerenih": 25.1,
+      "prosecanUdeoMerenih": 0.3253,
+      "prosecnaUstedaOperacija": 0.6757,
+      "najmanjiUdeo": 0.2857,
+      "najveciUdeo": 0.331
+    },
+    "више исхода": {
+      "grafova": 1666,
+      "prosecnoN": 76.9,
+      "prosecnoE": 113.3,
+      "prosecnoMerenih": 37.4,
+      "prosecanUdeoMerenih": 0.3265,
+      "prosecnaUstedaOperacija": 0.7651,
+      "najmanjiUdeo": 0.25,
+      "najveciUdeo": 0.3578
+    },
+    "мешовити": {
+      "grafova": 1666,
+      "prosecnoN": 49.6,
+      "prosecnoE": 66.3,
+      "prosecnoMerenih": 17.7,
+      "prosecanUdeoMerenih": 0.2582,
+      "prosecnaUstedaOperacija": 0.8471,
+      "najmanjiUdeo": 0,
+      "najveciUdeo": 0.3478
+    }
+  },
+  "poVelicini": {
+    "n ≤ 10": {
+      "grafova": 1208,
+      "prosecnoN": 6.9,
+      "prosecnoE": 7,
+      "prosecnoMerenih": 1.1,
+      "prosecanUdeoMerenih": 0.1238,
+      "prosecnaUstedaOperacija": 0.8939,
+      "najmanjiUdeo": 0,
+      "najveciUdeo": 0.3333
+    },
+    "n ≤ 25": {
+      "grafova": 2300,
+      "prosecnoN": 17.8,
+      "prosecnoE": 20.1,
+      "prosecnoMerenih": 3.3,
+      "prosecanUdeoMerenih": 0.1422,
+      "prosecnaUstedaOperacija": 0.8799,
+      "najmanjiUdeo": 0,
+      "najveciUdeo": 0.3529
+    },
+    "n ≤ 50": {
+      "grafova": 2389,
+      "prosecnoN": 37.7,
+      "prosecnoE": 50.2,
+      "prosecnoMerenih": 13.5,
+      "prosecanUdeoMerenih": 0.2623,
+      "prosecnaUstedaOperacija": 0.7771,
+      "najmanjiUdeo": 0,
+      "najveciUdeo": 0.3556
+    },
+    "n ≤ 100": {
+      "grafova": 3510,
+      "prosecnoN": 72,
+      "prosecnoE": 99.1,
+      "prosecnoMerenih": 28.1,
+      "prosecanUdeoMerenih": 0.2788,
+      "prosecnaUstedaOperacija": 0.7728,
+      "najmanjiUdeo": 0.2031,
+      "najveciUdeo": 0.3578
+    },
+    "n > 100": {
+      "grafova": 593,
+      "prosecnoN": 123.7,
+      "prosecnoE": 183,
+      "prosecnoMerenih": 60.4,
+      "prosecanUdeoMerenih": 0.329,
+      "prosecnaUstedaOperacija": 0.7621,
+      "najmanjiUdeo": 0.2481,
+      "najveciUdeo": 0.3515
+    }
+  }
+}
