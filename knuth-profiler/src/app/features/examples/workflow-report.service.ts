@@ -24,12 +24,15 @@ const EXAMPLE_SOURCE_SNIPPETS: Record<string, WorkflowReportCodeArtifact> = {
   'if-else': {
     filename: 'if-else.c',
     language: 'c',
-    source: 'int classify(int x) {\n  if (x > 0) {\n    return 1;\n  } else {\n    return -1;\n  }\n}',
+    // Isti kod kao u radu: cvor S pre grananja i spajanje M postoje u
+    // grafu primera, pa ih i funkcija mora imati.
+    source: 'int f(int x) {\n  int y = x;\n  if (y > 0)\n    y = y + 1;\n  else\n    y = y - 1;\n  return y;\n}',
   },
   'while-loop': {
     filename: 'while-loop.c',
     language: 'c',
-    source: 'int sum_to_n(int n) {\n  int i = 0;\n  int s = 0;\n  while (i < n) {\n    s += i;\n    i++;\n  }\n  return s;\n}',
+    // Isti kod kao u radu: graf primera nema poseban cvor posle petlje.
+    source: 'void f(int n) {\n  int i = 0;\n  while (i < n)\n    i = i + 1;\n}',
   },
   'nested-loop': {
     filename: 'nested-loop.c',
