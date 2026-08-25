@@ -37,6 +37,11 @@ const GRAFOVA = 200;
  * Nezavisnost od aplikacije: povratne grane su ovde istina po konstrukciji
  * (generator ih obelezava), a ne rezultat detekcije; obilazak je rekurzivan
  * sa memoizacijom, a ne topoloski.
+ *
+ * Pogled bez obelezenih povratnih grana MORA biti aciklican. Ciklus znaci
+ * da generator neku povratnu granu nije obelezio, i to je greska za sebe:
+ * obilazak je tada prekida izuzetkom, pa tvrdnja o tezinama pada glasno,
+ * umesto da ciklus tiho doprinese nulom kao da je grana iskljucena.
  */
 function ocekivaneTezine(data: GraphData): Map<string, number> {
   const grane = realEdges(data);
@@ -51,6 +56,7 @@ function ocekivaneTezine(data: GraphData): Map<string, number> {
   }
 
   const memo = new Map<string, number>();
+  const naSteku = new Set<string>();
   const brojPutanja = (cvor: string): number => {
     if (cvor === EXIT_NODE_ID) {
       return 1;
@@ -59,11 +65,15 @@ function ocekivaneTezine(data: GraphData): Map<string, number> {
     if (zapamceno !== undefined) {
       return zapamceno;
     }
+    if (naSteku.has(cvor)) {
+      throw new Error(
+        `циклус кроз чвор ${cvor}: генератор није обележио неку повратну грану`
+      );
+    }
 
-    // Graf bez povratnih grana je aciklican, pa se ovaj upis nikada ne cita
-    // pre nego sto ga konacna vrednost zameni.
-    memo.set(cvor, 0);
+    naSteku.add(cvor);
     const zbir = (izlazne.get(cvor) ?? []).reduce((acc, next) => acc + brojPutanja(next), 0);
+    naSteku.delete(cvor);
     memo.set(cvor, zbir);
     return zbir;
   };
