@@ -55,6 +55,11 @@ interface Zbir {
   prosecnoMerenih: number;
   prosecanUdeoMerenih: number;
   prosecnaUstedaOperacija: number;
+  devijacijaN: number;
+  devijacijaE: number;
+  devijacijaMerenih: number;
+  devijacijaUdeoMerenih: number;
+  devijacijaUstedaOperacija: number;
   najmanjiUdeo: number;
   najveciUdeo: number;
 }
@@ -119,6 +124,15 @@ function izmeri(): { merenja: Merenje[]; prekrsaji: string[] } {
 
 function zbir(grupa: Merenje[]): Zbir {
   const prosek = (f: (m: Merenje) => number) => grupa.reduce((s, m) => s + f(m), 0) / grupa.length;
+  // Uzoracka standardna devijacija (delilac je za jedan manji od broja grafova).
+  const devijacija = (f: (m: Merenje) => number) => {
+    if (grupa.length < 2) {
+      return 0;
+    }
+    const p = prosek(f);
+    const suma = grupa.reduce((s, m) => s + (f(m) - p) * (f(m) - p), 0);
+    return Math.sqrt(suma / (grupa.length - 1));
+  };
 
   return {
     grafova: grupa.length,
@@ -127,6 +141,11 @@ function zbir(grupa: Merenje[]): Zbir {
     prosecnoMerenih: round(prosek(m => m.brojMerenih), 1),
     prosecanUdeoMerenih: round(prosek(m => m.udeoMerenih), 4),
     prosecnaUstedaOperacija: round(prosek(m => m.ustedaOperacija), 4),
+    devijacijaN: round(devijacija(m => m.n), 1),
+    devijacijaE: round(devijacija(m => m.e), 1),
+    devijacijaMerenih: round(devijacija(m => m.brojMerenih), 1),
+    devijacijaUdeoMerenih: round(devijacija(m => m.udeoMerenih), 4),
+    devijacijaUstedaOperacija: round(devijacija(m => m.ustedaOperacija), 4),
     najmanjiUdeo: round(Math.min(...grupa.map(m => m.udeoMerenih)), 4),
     najveciUdeo: round(Math.max(...grupa.map(m => m.udeoMerenih)), 4),
   };
