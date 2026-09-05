@@ -1,4 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { TheoryStore } from '../../features/theory/theory.store';
 import { CommonModule } from '@angular/common';
 import { TheoryCardComponent } from '../../features/theory/theory-card/theory-card.component';
@@ -11,6 +12,14 @@ import { TheoryCardComponent } from '../../features/theory/theory-card/theory-ca
 })
 export class TheoryWizardComponent {
   private readonly store = inject(TheoryStore);
+
+  constructor() {
+    // ?korak=N otvara N-tu karticu (1-based); zgodno za deljenje i snimke.
+    const korak = Number(inject(ActivatedRoute).snapshot.queryParamMap.get('korak'));
+    if (Number.isInteger(korak) && korak >= 1) {
+      this.store.goTo(korak - 1);
+    }
+  }
 
   current = this.store.current;
   index = this.store.index;
